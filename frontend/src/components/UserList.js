@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import Form from 'react-bootstrap/Form'
+import Button from 'react-bootstrap/Button'
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import axios from 'axios'
+import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 
 function UsersList() {
@@ -20,32 +25,46 @@ function UsersList() {
   };
 
   return (
-    <div>
-      <h2>Users</h2>
-      <table border="1" cellPadding="5">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(u => (
-            <tr key={u.id}>
-              <td>{u.id}</td>
-              <td>{u.name}</td>
-              <td>{u.email}</td>
-              <td>
-                <Link to={`/edit/${u.id}`}>Edit</Link> | 
-                <button onClick={() => deleteUser(u.id)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+      <div className="container">
+          <div className="row">
+            <div className='col-12'>
+                <Link className='btn btn-primary mb-2 float-end' to={"/add"}>
+                    Add User
+                </Link>
+            </div>
+            <div className="col-12">
+                <div className="card card-body">
+                    <div className="table-responsive">
+                        <table className="table table-bordered mb-0 text-center">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                              {users.map(u => (
+                                <tr key={u.id}>
+                                  <td>{u.id}</td>
+                                  <td>{u.name}</td>
+                                  <td>{u.email}</td>
+                                  <td>
+                                    <Link to={`/edit/${u.id}`} className='btn btn-success me-2'>Edit</Link>
+                                    <Button variant="danger" onClick={()=>deleteUser(u.id)}>
+                                        Delete
+                                    </Button>
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+          </div>
+      </div>
   );
 }
 

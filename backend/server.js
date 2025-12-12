@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
+const { body, validationResult } = require('express-validator');
 require('dotenv').config();
 
 const app = express();
@@ -40,7 +41,7 @@ app.get('/users/:id', async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
+/*
 app.post('/users', async (req, res) => {
   const { name, email } = req.body;
   try {
@@ -54,20 +55,115 @@ app.post('/users', async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+*/
 
-app.put('/users/:id', async (req, res) => {
-  const { id } = req.params;
-  const { name, email } = req.body;
-  try {
-    const result = await pool.query(
-      'UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING *',
-      [name, email, id]
-    );
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server error");
+app.post(
+  '/users',
+  [
+    body('name').notEmpty().withMessage('Name is required'),
+    body('email')
+      .notEmpty().withMessage('Email is required')
+      .isEmail().withMessage('Email must be valid')
+  ],
+  async (req, res) => {
+
+    // Validate request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({
+        message: "Validation error",
+        errors: errors.array()
+      });
+    }
+
+    const { name, email } = req.body;
+
+    try {
+      // Check if email already exists
+      const emailCheck = await pool.query(
+        'SELECT * FROM users WHERE email = $1',
+        [email]
+      );
+
+      if (emailCheck.rows.length > 0) {
+        return res.status(422).json({
+          message: "Email already exists"
+        });
+      }
+
+      // Insert user
+      const result = await pool.query(
+        'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *',
+        [name, email]
+      );
+
+      return res.json({
+        message: "User Created Successfully!!",
+        user: result.rows[0]
+      });
+
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).json({
+        message: "Something goes wrong while adding a user!!"
+      });
+    }
   }
+);
+
+
+app.put(
+  '/users/:id',
+  [
+    body('name').notEmpty().withMessage('Name is required'),
+    body('email')
+      .notEmpty().withMessage('Email is required')
+      .isEmail().withMessage('Email must be valid')
+  ],
+  async (req, res) => {
+
+    // Validate request
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(422).json({
+        message: "Validation error",
+        errors: errors.array()
+      });
+    }
+
+    const { id } = req.params;
+    const { name, email } = req.body;
+
+    try {
+      // Check if email already exists
+      const emailCheck = await pool.query(
+        'SELECT * FROM users WHERE email = $1 AND id <> $2',
+        [email, id]
+      );
+
+      if (emailCheck.rows.length > 0) {
+        return res.status(422).json({
+          message: "Email already exists"
+        });
+      }
+
+      // Update user
+      const result = await pool.query(
+        'UPDATE users SET name=$1, email=$2 WHERE id=$3 RETURNING *',
+        [name, email, id]
+      );
+
+      return res.json({
+        message: "User Updated Successfully!!",
+        user: result.rows[0]
+      });
+
+    } catch (err) {
+      console.error(err.message);
+      return res.status(500).json({
+        message: "Something goes wrong while adding a user!!"
+      });
+    }
 });
 
 app.delete('/users/:id', async (req, res) => {
@@ -81,6 +177,12 @@ app.delete('/users/:id', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.listen(port, async () => {
+  try {
+    const res = await pool.query('SELECT NOW()');
+    console.log('✅ Database connected:', res.rows[0]);
+  } catch (err) {
+    console.error('❌ Database connection error:', err.message);
+  }
   console.log(`Server running on port ${port}`);
 });
