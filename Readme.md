@@ -1,6 +1,6 @@
-# Express + Express — CRUD Operation
+# Express + React — CRUD Operation
 
-Basic User CRUD operation with Express, React and PostgreSQL.
+Basic CRUD operation with Express, React and PostgreSQL.
 ## Project Details
 
 - **GitHub Repository**: [https://github.com/shohag-cse-knu/express-react-crud-app.git](https://github.com/shohag-cse-knu/express-react-crud-app.git)
@@ -19,7 +19,6 @@ Basic User CRUD operation with Express, React and PostgreSQL.
 - **NodeJS**: v24.12.0
 - **PostgreSQL**: PostgreSQL 17.7
 
-
 ## Setup Instructions
 
 ### 1. Clone the Repository
@@ -30,18 +29,16 @@ git clone https://github.com/shohag-cse-knu/express-react-crud-app.git
 ```bash
 cd backend
 ````
-### 3. NPM Install
+### 3. Install npm
 ```bash
 npm install
 ````
-### 4. Configure .env
+### 4. Create a PostgreSQL Database 'crud_app' or Run db.sql in PGAadmin
+
+### 5. Create .env and update DB_Name and DB_Pass
 ```bash
 cp .env.example .env
 ````
-Create a PostgreSQL Database and modify Database name, username and password in .env file.
-
-### 5. DB Import or manually create running the SQL commands from db.sql
-
 ### 6. Run Express Project
 ```bash
 node server.js
