@@ -7,7 +7,7 @@ import axios from 'axios'
 import Swal from 'sweetalert2';
 import { Link } from "react-router-dom";
 
-function UsersList() {
+export default function UsersList() {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -67,5 +67,3 @@ function UsersList() {
       </div>
   );
 }
-
-export default UsersList;

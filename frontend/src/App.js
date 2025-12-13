@@ -8,9 +8,9 @@ import "bootstrap/dist/css/bootstrap.css";
 
 import { BrowserRouter as Router , Routes, Route, Link } from "react-router-dom";
 
-import UsersList from "./components/UserList";
-import AddUser from "./components/AddUser";
-import EditUser from "./components/EditUser";
+import UsersList from "./components/user/list.component";
+import AddUser from "./components/user/add.component";
+import EditUser from "./components/user/edit.component";
 
 function App() {
   return (<Router>

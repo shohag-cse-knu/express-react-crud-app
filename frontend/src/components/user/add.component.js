@@ -1,46 +1,28 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Swal from 'sweetalert2';
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-function EditUser() {
+
+export default function AddUser() {
   const navigate = useNavigate();
 
-  const { id } = useParams()
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [validationError, setValidationError] = useState({})
+  const [validationError, setValidationError] = useState([]);
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  const fetchUser = async () => {
-    await axios.get(`http://localhost:5000/users/${id}`).then(({data})=>{
-      console.log(data)
-      const { name, email } = data
-      setName(name)
-      setEmail(email)
-    }).catch(({response:{data}})=>{
-      Swal.fire({
-        text:data.message,
-        icon:"error"
-      })
-    })
-  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      const response = await axios.put(`http://localhost:5000/users/${id}`, { name, email });
+    try {
+      const response = await axios.post(`http://localhost:5000/users`, { name, email });
       Swal.fire({
         icon: "success",
-        text: response.data.message || 'User updated successfully'
+        text: response.data.message || 'User added successfully'
       });
       navigate("/");
     } catch (error) {
@@ -59,14 +41,14 @@ function EditUser() {
       }
     }
   };
-  
-return (
+
+  return (
     <div className="container">
       <div className="row justify-content-center">
         <div className="col-12 col-sm-12 col-md-6">
           <div className="card">
             <div className="card-body">
-              <h4 className="card-title">Edit User</h4>
+              <h4 className="card-title">Add User</h4>
               <hr />
               <div className="form-wrapper">
                 {
@@ -104,7 +86,7 @@ return (
                       </Col>
                   </Row>
                   <Button variant="primary" className="mt-2" size="lg" block="block" type="submit">
-                    Update
+                    Add
                   </Button>
                 </Form>
               </div>
@@ -115,5 +97,3 @@ return (
     </div>
   );
 }
-
-export default EditUser;
